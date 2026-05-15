@@ -8,7 +8,7 @@ import * as cheerio from 'cheerio';
 //https://ru.hexlet.io/courses
 
 
-let _url;
+//let _url;
 
 
 function create_name(file_name) {
@@ -57,22 +57,75 @@ function create_directory(path_to_save,dir_name) {
 }
 
 
-function save_images(html_path,path_to_save=null) {
+export function save_page_data(html_path,_url,path_to_save=null) {
   let _path_to_save;
   if (!path_to_save)
        _path_to_save = process.cwd();
   else 
     _path_to_save = path_to_save;
 
-
   return fs.readFile(html_path,'utf-8').then((html) => { 
    
     return create_directory(_path_to_save,_url).then((new_dir_name) => {
       const $ = cheerio.load(html);
+      const target_host = new URL(_url).hostname;
+
       const img_src_arr = $('img')
       .map((index, element) => $(element).attr('src'))
       .get()
       .filter(Boolean);
+
+      const links_href_arr = $('link[href]')
+      .map((index, element) => $(element).attr('href'))
+      .get()
+      .filter(Boolean)
+      .filter((item) => {
+        const source_host = new URL(item, _url).hostname;
+        return source_host === target_host
+          || source_host.endsWith(`.${target_host}`);
+      });     
+
+      const scripts_src_arr = $('script[src]')
+      .map((index, element) => $(element).attr('src'))
+      .get()
+      .filter(Boolean)
+      .filter((item) => {
+        const source_host = new URL(item, _url).hostname;
+        return source_host === target_host
+          || source_host.endsWith(`.${target_host}`);
+      });      
+
+      let promises1 = links_href_arr.map((item) => {
+        const image_url = new URL(item, _url).href;
+        const html_dir = path.dirname(html_path);
+        const new_file_name = path.join(
+          new_dir_name,
+          create_name(image_url) + path.extname(new URL(image_url).pathname),
+        );
+        const relative_file_name = path.relative(html_dir, new_file_name);
+        html = html.replace(item,relative_file_name);
+        return axios({
+            method: 'get',
+            url: image_url,
+            responseType: 'arraybuffer'
+        }).then((res) => {return fs.writeFile(new_file_name,res.data)}).then(() => new_file_name);  
+      }) 
+
+      let promises2 = scripts_src_arr.map((item) => {
+        const image_url = new URL(item, _url).href;
+        const html_dir = path.dirname(html_path);
+        const new_file_name = path.join(
+          new_dir_name,
+          create_name(image_url) + path.extname(new URL(image_url).pathname),
+        );
+        const relative_file_name = path.relative(html_dir, new_file_name);
+        html = html.replace(item,relative_file_name);
+        return axios({
+            method: 'get',
+            url: image_url,
+            responseType: 'arraybuffer'
+        }).then((res) => {return fs.writeFile(new_file_name,res.data)}).then(() => new_file_name);  
+      })
 
       let promises = img_src_arr.map((item) => {
         const image_url = new URL(item, _url).href;
@@ -88,12 +141,13 @@ function save_images(html_path,path_to_save=null) {
             url: image_url,
             responseType: 'arraybuffer'
         }).then((res) => {return fs.writeFile(new_file_name,res.data)}).then(() => new_file_name);  
-      })    
-      return Promise.all(promises).then(() => ({text:html,f_path:html_path}));
-      //return Promise.all(promises);
+      })
+      let all_promises = [...promises,...promises1,...promises2 ];    
+      return Promise.all(all_promises).then(() => ({text:html,f_path:html_path}));
     }) 
   }).catch((error) => {console.error('Ошибка при сохранении изображений:', error.message); throw error});
 }
+
 
 
 //  https://ru.hexlet.io/courses
@@ -101,14 +155,14 @@ function save_images(html_path,path_to_save=null) {
 function main() {
   const rl = readline.createInterface({ input, output });
     console.log("start");    
-
+    let _url;
     rl.question('Введите адрес сайта: ')
     .then((url) => {
       _url = url;
       return get_page(url)
     })
     .then((data) => write_page_to_file(data,_url))
-    .then((html_path) => {return save_images(html_path)})
+    .then((html_path) => {return save_page_data(html_path,_url)})
     .then((html) => {fs.writeFile(html.f_path,html.text, 'utf-8')})   
     .catch((error) => {console.error('Ошибка:', error);throw error;})
     .finally(() => {
