@@ -4,5 +4,5 @@
 
 ### Demo
 
-[![asciicast](https://asciinema.org/connect/84f1db85-1bf4-4d95-b6b2-4144dc5538cf.svg)](https://asciinema.org/connect/84f1db85-1bf4-4d95-b6b2-4144dc5538cf)
+[![asciicast](https://asciinema.org/a/PU9fr9y4CgZY5Hrd)](https://asciinema.org/a/PU9fr9y4CgZY5Hrd)
 
