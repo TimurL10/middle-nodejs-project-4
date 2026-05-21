@@ -1,14 +1,26 @@
-import axios from 'axios';
-import readline from 'node:readline/promises';
+import debug from 'debug';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
+require('axios-debug-log/enable');
+
+debug.enable('page-loader,page-loader:*,axios');
+
+const log = debug('page-loader');
+
+const axios = require('axios').default;
+
+//import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import * as fs from 'fs/promises';
 import * as path from 'node:path';
-import * as cheerio from 'cheerio'; 
+import * as cheerio from 'cheerio';
+
 
 //https://ru.hexlet.io/courses
 
-
-//let _url;
+//https://ru.hexlet.io/courses
 
 
 function create_name(file_name) {
@@ -152,29 +164,29 @@ export function save_page_data(html_path,_url,path_to_save=null) {
 
 //  https://ru.hexlet.io/courses
 
-function main() {
-  const rl = readline.createInterface({ input, output });
-    console.log("start");    
-    let _url;
-    rl.question('Введите адрес сайта: ')
+export function main(url) {
+  //const rl = readline.createInterface({ input, output });
+    log('start download_page.js');    
+    /*rl.question('Введите адрес сайта: ')
     .then((url) => {
       _url = url;
       return get_page(url)
-    })
+    })*/
+
+  if (!url) {
+    return Promise.reject(new Error('Usage: page_loader <url>'));
+  }
+     let _url = url;
+   return  get_page(url)
     .then((data) => write_page_to_file(data,_url))
     .then((html_path) => {return save_page_data(html_path,_url)})
-    .then((html) => {fs.writeFile(html.f_path,html.text, 'utf-8')})   
+    .then((html) => {return fs.writeFile(html.f_path,html.text, 'utf-8')})   
     .catch((error) => {console.error('Ошибка:', error);throw error;})
     .finally(() => {
-      rl.close();
+      log('end download_page.js');   
+      //rl.close();
     });
-
-
-
 }
 
 
 
-
-
-main();
