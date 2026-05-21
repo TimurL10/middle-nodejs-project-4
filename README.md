@@ -8,4 +8,10 @@
 
 ### Logging example
 
-[![asciicast](https://asciinema.org/a/ouUfOkb3b4stllHq)](https://asciinema.org/a/ouUfOkb3b4stllHq)
+[![asciicast2](https://asciinema.org/a/ouUfOkb3b4stllHq)](https://asciinema.org/a/ouUfOkb3b4stllHq)
+
+
+### Error logging example
+
+[![asciicast3](https://asciinema.org/a/2ZDpZElnw4vSqFhZ)](https://asciinema.org/a/2ZDpZElnw4vSqFhZ)
+
