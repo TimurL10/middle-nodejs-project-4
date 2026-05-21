@@ -15,3 +15,11 @@
 
 [![asciicast3](https://asciinema.org/a/2ZDpZElnw4vSqFhZ)](https://asciinema.org/a/2ZDpZElnw4vSqFhZ)
 
+
+### Progress example
+
+[![asciicast4](https://asciinema.org/a/UJQ2A0ciyM0EFXto)](https://asciinema.org/a/UJQ2A0ciyM0EFXto)
+
+
+
+ 
