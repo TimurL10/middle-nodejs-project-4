@@ -1,5 +1,6 @@
 import debug from 'debug';
 import { createRequire } from 'node:module';
+import Listr from 'listr';
 
 const require = createRequire(import.meta.url);
 
@@ -20,14 +21,15 @@ import * as cheerio from 'cheerio';
 
 //https://ru.hexlet.io/courses
 
-//https://ru.hexlet.io/courses
-
 
 function create_name(file_name) {
-  return file_name.replace('https://','').replace(/\./g,'_').replace(/\//g,'_').slice(0,115);
+  try {
+    return file_name.replace('https://','').replace(/\./g,'_').replace(/\//g,'_').slice(0,115);
+  }
+  catch (e) {
+    throw new Error(`${new Date().toISOString()} create_name() ${e.message}`, { cause: e });
+  }  
 }
-
-
 
 export function get_page (url) {
 
@@ -35,9 +37,15 @@ export function get_page (url) {
         method: 'get',
         url: url,
         responseType: 'text'
-    }).then((res) => res.data)
-
+    })
+    .then((res) => res.data)
+    .catch((e) => {
+      const status = e.response?.status;
+      const statusText = e.response?.statusText;
+      throw new Error(`${new Date().toISOString()} get_page() failed for ${url}: ${status || ''} ${statusText || ''} ${e.message}`, { cause: e });
+    })  
 }
+
 
 export function write_page_to_file (text,file_name,path_to_save=null) {
     let _path_to_save;
@@ -49,11 +57,14 @@ export function write_page_to_file (text,file_name,path_to_save=null) {
     let new_file_name = create_name(file_name) + '.html';
     new_file_name = path.join(_path_to_save,new_file_name);
 
-    return fs.writeFile(new_file_name,text, 'utf-8').then(() => new_file_name);
-    
+    return fs.writeFile(new_file_name,text, 'utf-8').then(() => new_file_name)
+    .catch((e) => {
+      throw new Error(`${new Date().toISOString()} write_page_to_file() ${e.message}`, { cause: e });
+    });    
 }
 
-function create_directory(path_to_save,dir_name) {
+
+function create_directory(path_to_save,dir_name) { 
   if (!dir_name)
     return;
 
@@ -63,9 +74,11 @@ function create_directory(path_to_save,dir_name) {
   .then(() => new_path)
   .catch(() => {
     return fs.mkdir(new_path, { recursive: true })
-      .then(() => new_path);
-  });
-       
+      .then(() => new_path)
+      .catch((e) => {
+        throw new Error(`${new Date().toISOString()} create_directory() ${e.message}`, { cause: e });
+    }); 
+  });       
 }
 
 
@@ -120,8 +133,15 @@ export function save_page_data(html_path,_url,path_to_save=null) {
             method: 'get',
             url: image_url,
             responseType: 'arraybuffer'
-        }).then((res) => {return fs.writeFile(new_file_name,res.data)}).then(() => new_file_name);  
-      }) 
+        })
+        .then((res) => {return fs.writeFile(new_file_name,res.data)})
+        .then(() => new_file_name)
+        .catch((e) => {
+          const status = e.response?.status;
+          const statusText = e.response?.statusText;
+          throw new Error(`${new Date().toISOString()} save_page_data() failed for ${image_url}: ${status || ''} ${statusText || ''} ${e.message}`, { cause: e });
+          }) 
+        })
 
       let promises2 = scripts_src_arr.map((item) => {
         const image_url = new URL(item, _url).href;
@@ -136,8 +156,15 @@ export function save_page_data(html_path,_url,path_to_save=null) {
             method: 'get',
             url: image_url,
             responseType: 'arraybuffer'
-        }).then((res) => {return fs.writeFile(new_file_name,res.data)}).then(() => new_file_name);  
-      })
+        })
+        .then((res) => {return fs.writeFile(new_file_name,res.data)})
+        .then(() => new_file_name)
+        .catch((e) => {
+            const status = e.response?.status;
+            const statusText = e.response?.statusText;
+            throw new Error(`${new Date().toISOString()} save_page_data() failed for ${image_url}: ${status || ''} ${statusText || ''} ${e.message}`, { cause: e });
+          }) 
+        })
 
       let promises = img_src_arr.map((item) => {
         const image_url = new URL(item, _url).href;
@@ -152,39 +179,73 @@ export function save_page_data(html_path,_url,path_to_save=null) {
             method: 'get',
             url: image_url,
             responseType: 'arraybuffer'
-        }).then((res) => {return fs.writeFile(new_file_name,res.data)}).then(() => new_file_name);  
-      })
+        })
+        .then((res) => {return fs.writeFile(new_file_name,res.data)})
+        .then(() => new_file_name)          
+        .catch((e) => {
+            const status = e.response?.status;
+            const statusText = e.response?.statusText;
+            throw new Error(`${new Date().toISOString()} save_page_data() failed for ${image_url}, status: ${status || ''}, statusText: ${statusText || ''} errorText: ${e.message}`, { cause: e });
+          }) 
+        })
       let all_promises = [...promises,...promises1,...promises2 ];    
       return Promise.all(all_promises).then(() => ({text:html,f_path:html_path}));
     }) 
-  }).catch((error) => {console.error('Ошибка при сохранении изображений:', error.message); throw error});
+  })
+  .catch((e) => {
+    throw e
+    });
 }
-
 
 
 //  https://ru.hexlet.io/courses
 
 export function main(url) {
-  //const rl = readline.createInterface({ input, output });
-    log('start download_page.js');    
-    /*rl.question('Введите адрес сайта: ')
-    .then((url) => {
-      _url = url;
-      return get_page(url)
-    })*/
+  log('start download_page.js');
 
   if (!url) {
-    return Promise.reject(new Error('Usage: page_loader <url>'));
+    return Promise.reject(new Error('url you entered is wrong'));
   }
-     let _url = url;
-   return  get_page(url)
-    .then((data) => write_page_to_file(data,_url))
-    .then((html_path) => {return save_page_data(html_path,_url)})
-    .then((html) => {return fs.writeFile(html.f_path,html.text, 'utf-8')})   
-    .catch((error) => {console.error('Ошибка:', error);throw error;})
+
+  const tasks = new Listr([
+    {
+      title: 'Download page',
+      task: (ctx) => {
+        return get_page(url)
+          .then((data) => {
+            ctx.data = data;
+          });
+      },
+    },
+    {
+      title: 'Save page to file',
+      task: (ctx) => {
+        return write_page_to_file(ctx.data, url)
+          .then((htmlPath) => {
+            ctx.htmlPath = htmlPath;
+          });
+      },
+    },
+    {
+      title: 'Download page resources',
+      task: (ctx) => {
+        return save_page_data(ctx.htmlPath, url)
+          .then((html) => {
+            ctx.html = html;
+          });
+      },
+    },
+    {
+      title: 'Update html file',
+      task: (ctx) => {
+        return fs.writeFile(ctx.html.f_path, ctx.html.text, 'utf-8');
+      },
+    },
+  ]);
+
+  return tasks.run()
     .finally(() => {
-      log('end download_page.js');   
-      //rl.close();
+      log('end download_page.js');
     });
 }
 

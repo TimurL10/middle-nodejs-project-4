@@ -8,6 +8,6 @@ const url = process.argv[2];
 
 main(url)
 .catch((error) => {
-    console.error(error.message);
+    console.error(`Error: ${error.message}`);
     process.exit(1);
   });
