@@ -143,7 +143,7 @@ export function save_page_data(html_path,_url,path_to_save=null) {
         const html_dir = path.dirname(html_path);
         const new_file_name = path.join(
           new_dir_name,
-          create_name(image_url) + path.extname(new URL(image_url).pathname),
+          create_name(image_url) + path.extname(new URL(image_url).pathname) || '.html',
         );
         const relative_file_name = path.relative(html_dir, new_file_name);
         html = html.replace(item,relative_file_name);
