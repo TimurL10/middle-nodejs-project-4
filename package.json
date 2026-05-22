@@ -2,7 +2,8 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "Проект: Загрузчик страниц",
-  "main": "download_page.js",
+  "main": "./src/download_page.js",
+  "exports": "./src/download_page.js",
   "type": "module",
   "scripts": {
     "lint": "eslint .",

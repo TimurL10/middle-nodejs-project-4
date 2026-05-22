@@ -200,7 +200,7 @@ export function save_page_data(html_path,_url,path_to_save=null) {
 
 //  https://ru.hexlet.io/courses
 
-export function main(url) {
+export default function main(url) {
   log('start download_page.js');
 
   if (!url) {

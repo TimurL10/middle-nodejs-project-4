@@ -22,18 +22,18 @@ async function fileExists(dirPath, fileName) {
 
 test('check image saved',async () => {
     //https://ru.hexlet.io/vite/assets/hexlet_ru_og_logo-BTQJlhfA.png
-    let html = await save_page_data(path.join(__dirname,'..','__fixtures__/save_images.html'), url, path.join(__dirname,'..','__fixtures__'));
-    expect(await fileExists(path.join(__dirname,'..','__fixtures__/ru_hexlet_io_courses_files'),'ru_hexlet_io_vite_assets_hexlet_ru_og_logo-BTQJlhfA_png.png')).toBe(true);
+    let html = await save_page_data(path.join(__dirname,'..','__fixtures__','save_images.html'), url, path.join(__dirname,'..','__fixtures__'));
+    expect(await fileExists(path.join(__dirname,'..','__fixtures__','ru_hexlet_io_courses_files'),'ru_hexlet_io_vite_assets_hexlet_ru_og_logo-BTQJlhfA_png.png')).toBe(true);
 });
 
 test('check html replaced',async () => {
-    let html = await save_page_data(path.join(__dirname,'..','__fixtures__/save_images.html'),url,path.join(__dirname,'..','__fixtures__/'));
+    let html = await save_page_data(path.join(__dirname,'..','__fixtures__','save_images.html'),url,path.join(__dirname,'..','__fixtures__'));
     await fs.writeFile(html.f_path,html.text, 'utf-8');
 
-    const actual = await fs.readFile(path.join(__dirname,'..','__fixtures__/save_images.html'), 'utf-8');
-    const expected = await fs.readFile(path.join(__dirname,'..','__fixtures__/save_images_target.html'), 'utf-8');
+    const actual = await fs.readFile(path.join(__dirname,'..','__fixtures__','save_images.html'), 'utf-8');
+    const expected = await fs.readFile(path.join(__dirname,'..','__fixtures__','save_images_target.html'), 'utf-8');
 
-    expect(actual).toBe(expected);   
+    expect(actual).toBe(expected);  
 
 });
 
