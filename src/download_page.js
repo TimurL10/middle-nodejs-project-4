@@ -30,11 +30,23 @@ const __dirname = path.dirname(__filename);
 
 function create_name(file_name) {
   try {
-    return file_name.replace('https://','').replace(/\./g,'-').replace(/\//g,'-');//.slice(0,115);
-  }
-  catch (e) {
+    const url = new URL(file_name);
+
+    const ext = path.extname(url.pathname);
+
+    const pathname = ext
+      ? url.pathname.slice(0, -ext.length)
+      : url.pathname;
+
+    return `${url.hostname}${pathname}`
+      .replace(/\./g, '-')
+      .replace(/\//g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 115);
+  } catch (e) {
     throw new Error(`${new Date().toISOString()} create_name() ${e.message}`, { cause: e });
-  }  
+  }
 }
 
 export function get_page (url) {
@@ -206,7 +218,7 @@ export function save_page_data(html_path,_url,path_to_save=null) {
 
 //  https://ru.hexlet.io/courses
 
-export default function main(url, path_to_save = null) {
+function main(url, path_to_save = null) {
   log('start download_page.js');
 
   if (!url) {
@@ -256,4 +268,4 @@ export default function main(url, path_to_save = null) {
 }
 
 
-
+export default main;

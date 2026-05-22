@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { main } from '../src/download_page.js';
+import main  from '../src/download_page.js';
 
 
 
-
-const url;
-const path_to_save;
+const args = process.argv.slice(2);
+let url;
+let path_to_save;
 
 if (args[0] === '-o') {
   path_to_save = args[1];

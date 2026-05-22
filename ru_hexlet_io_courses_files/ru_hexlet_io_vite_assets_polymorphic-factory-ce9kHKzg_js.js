@@ -1,1 +1,0 @@
-import{r as e}from"./factory-D2JuKQYe.js";import{t}from"./jsx-runtime-MIYtf51s.js";var n=t();function r(t){let r=t;return r.withProps=e=>{let t=t=>(0,n.jsx)(r,{...e,...t});return t.extend=r.extend,t.displayName=`WithProps(${r.displayName})`,t},r.extend=e,r}export{r as t};
