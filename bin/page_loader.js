@@ -15,7 +15,7 @@ if (args[0] === '-o') {
   url = args[0];
 }
 
-main(url, path_to_save = null)
+main(url, path_to_save)
 .catch((error) => {
     console.error(`Error: ${error.message}`);
     process.exit(1);
