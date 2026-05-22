@@ -68,7 +68,7 @@ export function get_page (url) {
 export function write_page_to_file (text,file_name,path_to_save=null) {
     let _path_to_save;
     if (!path_to_save)
-        _path_to_save = __dirname;
+        _path_to_save = process.cwd();
     else 
       _path_to_save = path_to_save;
 
@@ -110,7 +110,7 @@ function is_local_resource(item, page_url) {
 export function save_page_data(html_path,_url,path_to_save=null) {
   let _path_to_save;
   if (!path_to_save)
-       _path_to_save = __dirname;
+       _path_to_save = process.cwd();
   else 
     _path_to_save = path_to_save;
 
@@ -227,7 +227,7 @@ export function save_page_data(html_path,_url,path_to_save=null) {
 
 //  https://ru.hexlet.io/courses
 
-function main(url, path_to_save = null) {
+function main(url, path_to_save = process.cwd()) {
   log('start download_page.js');
 
   if (!url) {
@@ -237,36 +237,28 @@ function main(url, path_to_save = null) {
   const tasks = new Listr([
     {
       title: 'Download page',
-      task: (ctx) => {
-        return get_page(url)
-          .then((data) => {
-            ctx.data = data;
-          });
-      },
+      task: (ctx) => get_page(url)
+        .then((data) => {
+          ctx.data = data;
+        }),
     },
     {
       title: 'Save page to file',
-      task: (ctx) => {
-        return write_page_to_file(ctx.data, url, path_to_save)
-          .then((htmlPath) => {
-            ctx.htmlPath = htmlPath;
-          });
-      },
+      task: (ctx) => write_page_to_file(ctx.data, url, path_to_save)
+        .then((htmlPath) => {
+          ctx.htmlPath = htmlPath;
+        }),
     },
     {
       title: 'Download page resources',
-      task: (ctx) => {
-        return save_page_data(ctx.htmlPath, url, path_to_save)
-          .then((html) => {
-            ctx.html = html;
-          });
-      },
+      task: (ctx) => save_page_data(ctx.htmlPath, url, path_to_save)
+        .then((html) => {
+          ctx.html = html;
+        }),
     },
     {
       title: 'Update html file',
-      task: (ctx) => {
-        return fs.writeFile(ctx.html.f_path, ctx.html.text, 'utf-8');
-      },
+      task: (ctx) => fs.writeFile(ctx.html.f_path, ctx.html.text, 'utf-8'),
     },
   ]);
 
