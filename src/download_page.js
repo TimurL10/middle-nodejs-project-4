@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 
 function create_name(file_name) {
   try {
-    return file_name.replace('https://','').replace(/\./g,'_').replace(/\//g,'_').slice(0,115);
+    return file_name.replace('https://','').replace(/\./g,'-').replace(/\//g,'-');//.slice(0,115);
   }
   catch (e) {
     throw new Error(`${new Date().toISOString()} create_name() ${e.message}`, { cause: e });
