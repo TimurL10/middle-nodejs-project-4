@@ -139,27 +139,36 @@ export function save_page_data(html_path,_url,path_to_save=null) {
       .filter((item) => is_local_resource(item, _url));
 
       let promises1 = links_href_arr.map((item) => {
-        const image_url = new URL(item, _url).href;
-        const html_dir = path.dirname(html_path);
-        const new_file_name = path.join(
-          new_dir_name,
-          create_name(image_url) + path.extname(new URL(image_url).pathname) || '.html',
-        );
-        const relative_file_name = path.relative(html_dir, new_file_name);
-        html = html.replace(item,relative_file_name);
-        return axios({
-            method: 'get',
-            url: image_url,
-            responseType: 'arraybuffer'
-        })
-        .then((res) => {return fs.writeFile(new_file_name,res.data)})
+      const image_url = new URL(item, _url).href;
+      const html_dir = path.dirname(html_path);
+
+      const resource_ext = path.extname(new URL(image_url).pathname) || '.html';
+
+      const new_file_name = path.join(
+        new_dir_name,
+        create_name(image_url) + resource_ext,
+      );
+
+      const relative_file_name = path.relative(html_dir, new_file_name);
+      html = html.replace(item, relative_file_name);
+
+      return axios({
+        method: 'get',
+        url: image_url,
+        responseType: 'arraybuffer',
+      })
+        .then((res) => fs.writeFile(new_file_name, res.data))
         .then(() => new_file_name)
         .catch((e) => {
           const status = e.response?.status;
           const statusText = e.response?.statusText;
-          throw new Error(`${new Date().toISOString()} save_page_data() failed for ${image_url}: ${status || ''} ${statusText || ''} ${e.message}`, { cause: e });
-          }) 
-        })
+
+          throw new Error(
+            `${new Date().toISOString()} save_page_data() failed for ${image_url}: ${status || ''} ${statusText || ''} ${e.message}`,
+              { cause: e },
+            );
+          });
+      });
 
       let promises2 = scripts_src_arr.map((item) => {
         const image_url = new URL(item, _url).href;
