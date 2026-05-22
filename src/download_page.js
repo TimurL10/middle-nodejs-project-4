@@ -81,6 +81,13 @@ function create_directory(path_to_save,dir_name) {
   });       
 }
 
+function is_local_resource(item, page_url) {
+  const source_host = new URL(item, page_url).hostname;
+  const target_host = new URL(page_url).hostname;
+
+  return source_host === target_host;
+}
+
 
 export function save_page_data(html_path,_url,path_to_save=null) {
   let _path_to_save;
@@ -98,27 +105,20 @@ export function save_page_data(html_path,_url,path_to_save=null) {
       const img_src_arr = $('img')
       .map((index, element) => $(element).attr('src'))
       .get()
-      .filter(Boolean);
+      .filter(Boolean)
+      .filter((item) => is_local_resource(item, _url));
 
       const links_href_arr = $('link[href]')
       .map((index, element) => $(element).attr('href'))
       .get()
       .filter(Boolean)
-      .filter((item) => {
-        const source_host = new URL(item, _url).hostname;
-        return source_host === target_host
-          || source_host.endsWith(`.${target_host}`);
-      });     
+      .filter((item) => is_local_resource(item, _url));
 
       const scripts_src_arr = $('script[src]')
       .map((index, element) => $(element).attr('src'))
       .get()
       .filter(Boolean)
-      .filter((item) => {
-        const source_host = new URL(item, _url).hostname;
-        return source_host === target_host
-          || source_host.endsWith(`.${target_host}`);
-      });      
+      .filter((item) => is_local_resource(item, _url));
 
       let promises1 = links_href_arr.map((item) => {
         const image_url = new URL(item, _url).href;
