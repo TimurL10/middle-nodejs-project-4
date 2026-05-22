@@ -18,6 +18,12 @@ import * as fs from 'fs/promises';
 import * as path from 'node:path';
 import * as cheerio from 'cheerio';
 
+import { fileURLToPath } from 'node:url';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 //https://ru.hexlet.io/courses
 
@@ -50,7 +56,7 @@ export function get_page (url) {
 export function write_page_to_file (text,file_name,path_to_save=null) {
     let _path_to_save;
     if (!path_to_save)
-        _path_to_save = process.cwd();
+        _path_to_save = __dirname;
     else 
       _path_to_save = path_to_save;
 
@@ -92,7 +98,7 @@ function is_local_resource(item, page_url) {
 export function save_page_data(html_path,_url,path_to_save=null) {
   let _path_to_save;
   if (!path_to_save)
-       _path_to_save = process.cwd();
+       _path_to_save = __dirname;
   else 
     _path_to_save = path_to_save;
 
@@ -200,7 +206,7 @@ export function save_page_data(html_path,_url,path_to_save=null) {
 
 //  https://ru.hexlet.io/courses
 
-export default function main(url) {
+export default function main(url, path_to_save = null) {
   log('start download_page.js');
 
   if (!url) {
@@ -220,7 +226,7 @@ export default function main(url) {
     {
       title: 'Save page to file',
       task: (ctx) => {
-        return write_page_to_file(ctx.data, url)
+        return write_page_to_file(ctx.data, url, path_to_save)
           .then((htmlPath) => {
             ctx.htmlPath = htmlPath;
           });
@@ -229,7 +235,7 @@ export default function main(url) {
     {
       title: 'Download page resources',
       task: (ctx) => {
-        return save_page_data(ctx.htmlPath, url)
+        return save_page_data(ctx.htmlPath, url, path_to_save)
           .then((html) => {
             ctx.html = html;
           });
