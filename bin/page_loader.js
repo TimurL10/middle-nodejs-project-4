@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 import main  from '../src/download_page.js';
+import { Command } from 'commander';
 
 
-
+/*
 const args = process.argv.slice(2);
 let url;
 let path_to_save;
@@ -20,3 +21,25 @@ main(url, path_to_save)
     console.error(`Error: ${error.message}`);
     process.exit(1);
   });
+
+*/
+const program = new Command();
+
+program
+  .name('page-loader')
+  .description('Download page and local resources')
+  .version('1.0.0')
+  .option('-o, --output <dir>', 'output directory', process.cwd())
+  .argument('<url>')
+  .action((url, options) => {
+    main(url, options.output)
+      .then((dataDirPath) => {
+        console.log(dataDirPath);
+      })
+      .catch((error) => {
+        console.error(`Error: ${error.message}`);
+        process.exit(1);
+      });
+  });
+
+program.parse();

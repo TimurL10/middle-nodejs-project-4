@@ -1,0 +1,1 @@
+import{o as e}from"./chunk-CMxvf4Kt.js";import{t}from"./react-C1Wm8aMI.js";import{t as n}from"./use-media-query-mpdhPPr4.js";var r=e(t(),1);function i(e,t){let n=(0,r.useRef)(!1);(0,r.useEffect)(()=>()=>{n.current=!1},[]),(0,r.useEffect)(()=>{if(n.current)return e();n.current=!0},t)}function a(e,t){return n(`(prefers-reduced-motion: reduce)`,e,t)}export{i as n,a as t};

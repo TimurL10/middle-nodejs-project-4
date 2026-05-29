@@ -4,7 +4,7 @@ import Listr from 'listr';
 
 const require = createRequire(import.meta.url);
 
-require('axios-debug-log/enable');
+//require('axios-debug-log/enable');
 
 debug.enable('page-loader,page-loader:*,axios');
 
@@ -13,17 +13,11 @@ const log = debug('page-loader');
 const axios = require('axios').default;
 
 //import readline from 'node:readline/promises';
-import { stdin as input, stdout as output } from 'node:process';
 import * as fs from 'fs/promises';
 import * as path from 'node:path';
 import * as cheerio from 'cheerio';
 
 import { fileURLToPath } from 'node:url';
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 
 //https://ru.hexlet.io/courses
 
@@ -117,9 +111,7 @@ export function save_page_data(html_path,_url,path_to_save=null) {
   return fs.readFile(html_path,'utf-8').then((html) => { 
    
     return create_directory(_path_to_save,_url).then((new_dir_name) => {
-      const $ = cheerio.load(html);
-      const target_host = new URL(_url).hostname;
-
+      const $ = cheerio.load(html); 
       const img_src_arr = $('img')
       .map((index, element) => $(element).attr('src'))
       .get()
@@ -263,6 +255,7 @@ function main(url, path_to_save = process.cwd()) {
   ]);
 
   return tasks.run()
+    .then(() => path.join(path_to_save, `${create_name(url)}_files`))
     .finally(() => {
       log('end download_page.js');
     });

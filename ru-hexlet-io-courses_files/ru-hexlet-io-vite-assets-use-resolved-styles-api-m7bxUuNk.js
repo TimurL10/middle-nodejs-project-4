@@ -1,0 +1,1 @@
+import{u as e}from"./Box-6xCarKan.js";import{o as t,s as n}from"./factory-Be_Qf1B3.js";function r({classNames:r,styles:i,props:a,stylesCtx:o}){let s=e();return{resolvedClassNames:r===void 0?void 0:n({theme:s,classNames:r,props:a,stylesCtx:o||void 0}),resolvedStyles:i===void 0?void 0:t({theme:s,styles:i,props:a,stylesCtx:o||void 0})}}export{r as t};

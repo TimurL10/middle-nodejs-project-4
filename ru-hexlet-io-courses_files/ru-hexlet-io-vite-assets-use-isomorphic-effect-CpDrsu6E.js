@@ -1,0 +1,1 @@
+import{o as e}from"./chunk-CMxvf4Kt.js";import{t}from"./react-C1Wm8aMI.js";var n=e(t(),1),r=typeof document<`u`?n.useLayoutEffect:n.useEffect;export{r as t};

@@ -1,27 +1,36 @@
-import { test, expect } from '@jest/globals';
+import {
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+} from '@jest/globals';
 import nock from 'nock';
-import {write_page_to_file} from '../src/download_page.js';
+import { write_page_to_file } from '../src/download_page.js';
 import * as fs from 'fs/promises';
-
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import os from 'node:os';
 
+beforeAll(() => {
+  nock.disableNetConnect();
+});
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+afterAll(() => {
+  nock.enableNetConnect();
+});
 
-test('check write_file', async() => {
-    let test_path = path.join(__dirname,'..','__fixtures__');
-    let file_name = 'https://ru.hexlet.io/courses';
-    let target_path = await  write_page_to_file('test text',file_name,test_path);   
+test('writes page content to html file', async () => {
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
 
-    let stats = await fs.stat(path.join(test_path,'ru-hexlet-io-courses.html'));
-    expect (stats.size).toBeGreaterThan(1);
-})
+  try {
+    const pageContent = 'test text';
+    const pageUrl = 'https://ru.hexlet.io/courses';
+    const expectedPath = path.join(tmpDir, 'ru-hexlet-io-courses.html');
+    const actualPath = await write_page_to_file(pageContent, pageUrl, tmpDir);
+    const actualContent = await fs.readFile(actualPath, 'utf-8');
 
-test('check file name and save path', async() => {
-    let test_path = path.join(__dirname,'..','__fixtures__');
-    let file_name = 'https://ru.hexlet.io/courses';
-    let target_path = await  write_page_to_file('test text',file_name,test_path);
-    expect(target_path).toBe(path.join(test_path,'ru-hexlet-io-courses.html'));    
-})
+    expect(actualPath).toBe(expectedPath);
+    expect(actualContent).toBe(pageContent);
+  } finally {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  }
+});
