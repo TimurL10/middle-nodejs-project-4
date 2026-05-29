@@ -1,1 +1,0 @@
-import{o as e}from"./chunk-CMxvf4Kt.js";import{t}from"./react-C1Wm8aMI.js";import{t as n}from"./random-id-S7a4JWBX.js";import{t as r}from"./use-isomorphic-effect-CpDrsu6E.js";var i=e(t(),1);function a(e){let[t,a]=(0,i.useState)(`mantine-${(0,i.useId)().replace(/:/g,``)}`);return r(()=>{a(n())},[]),typeof e==`string`?e:t}export{a as t};

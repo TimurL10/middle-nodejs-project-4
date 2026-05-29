@@ -1,1 +1,0 @@
-import{o as e}from"./chunk-CMxvf4Kt.js";import{t}from"./react-C1Wm8aMI.js";import{t as n}from"./jsx-runtime-sLPvdpSW.js";var r=e(t(),1);n();var i=(0,r.createContext)({dir:`ltr`,toggleDirection:()=>{},setDirection:()=>{}});function a(){return(0,r.use)(i)}export{a as t};
