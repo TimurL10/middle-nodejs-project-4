@@ -31,6 +31,4 @@
 
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=timurl10&metric=code_smells&token=a5e48b4f3482325d9e33601d91460a0238a6b2ee)](https://sonarcloud.io/summary/new_code?id=timurl10)
 
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=timurl10&metric=coverage&token=a5e48b4f3482325d9e33601d91460a0238a6b2ee)](https://sonarcloud.io/summary/new_code?id=timurl10)
-
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=timurl10&metric=duplicated_lines_density&token=a5e48b4f3482325d9e33601d91460a0238a6b2ee)](https://sonarcloud.io/summary/new_code?id=timurl10)
